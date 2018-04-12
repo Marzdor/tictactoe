@@ -1,0 +1,20 @@
+* {
+  box-sizing : border-box;
+  font-family: 'Roboto Mono', monospace;
+}
+
+body {
+  background-color: $bodyBackground;
+}
+
+a {
+  text-decoration: none;
+  color          : black;
+}
+@mixin atLarge {
+  body,
+  html {
+    margin: 0;
+    height: 100%;
+  }
+}
