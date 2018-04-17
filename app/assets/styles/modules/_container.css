@@ -1,5 +1,12 @@
 .container {
-  width : 150px;
-  height: 150px;
-  margin: 100px auto 0;
+  &-display {
+    margin: 25px auto 0;
+    width : 60%;
+  }
+
+  &-table {
+    width : 150px;
+    height: 150px;
+    margin: 100px auto 0;
+  }
 }
