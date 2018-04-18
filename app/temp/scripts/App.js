@@ -112,6 +112,13 @@ function boardClicked() {
       GAMEDATA.gameOver = true;
     }
 
+    if (GAMEDATA.currentPlayer === 2 && GAMEDATA.ai && !GAMEDATA.gameOver) {
+      setTimeout(function () {
+        if (checkBoard()) {
+          aiTurn();
+        }
+      }, 1000);
+    }
     if (GAMEDATA.gameOver) {
       endGame();
     }
@@ -126,13 +133,6 @@ function placement(zone, x, y) {
       GAMEDATA.currentPlayer = 2;
       (0, _jquery2.default)("#p1").removeClass("display-curPlayer");
       (0, _jquery2.default)("#p2").addClass("display-curPlayer");
-      if (GAMEDATA.ai) {
-        setTimeout(function () {
-          if (checkBoard()) {
-            aiTurn();
-          }
-        }, 3000);
-      }
     } else if (!GAMEDATA.ai) {
       zone.text("O");
       GAMEDATA.gameBoard[x][y] = "O";
@@ -165,9 +165,10 @@ function aiTurn() {
       GAMEDATA.gameBoard[posX][posY] = "O";
       (0, _jquery2.default)(cord).text("O");
       GAMEDATA.currentPlayer = 1;
+      zoneFound = true;
+      (0, _jquery2.default)(cord).trigger("click");
       (0, _jquery2.default)("#p1").addClass("display-curPlayer");
       (0, _jquery2.default)("#p2").removeClass("display-curPlayer");
-      zoneFound = true;
     }
   }
 }
