@@ -54,8 +54,11 @@ function placement(zone, x, y) {
       $("#p1").removeClass("display-curPlayer");
       $("#p2").addClass("display-curPlayer");
       if (GAMEDATA.ai) {
-
-        aiTurn();
+        setTimeout(function() {
+          if (checkBoard()) {
+            aiTurn();
+          }
+        }, 3000);
       }
     } else if (!(GAMEDATA.ai)) {
       zone.text("O");
@@ -67,15 +70,23 @@ function placement(zone, x, y) {
   }
 }
 
+function checkBoard() {
+  let arr = GAMEDATA.gameBoard.reduce(function(acc, curVal) {
+    return acc.concat(curVal);
+  }, []);
+  return arr.some((elm) => {
+    return elm === "";
+  });
+}
+
 function aiTurn() {
   let zoneFound = false;
 
   while (!(zoneFound)) {
     let posX = Math.floor(Math.random() * Math.floor(3));
     let posY = Math.floor(Math.random() * Math.floor(3));
-
     let zone = GAMEDATA.gameBoard[posX][posY];
-    console.log(zone);
+
     let cord = "#" + posX + posY;
     if (zone === "") {
       GAMEDATA.gameBoard[posX][posY] = "O";
@@ -151,5 +162,8 @@ function endGame() {
     GAMEDATA.gameOver = false;
     GAMEDATA.winner = "";
     GAMEDATA.loser = "";
+    if (GAMEDATA.currentPlayer === 2 && GAMEDATA.ai) {
+      aiTurn();
+    }
   }, 3000);
 }

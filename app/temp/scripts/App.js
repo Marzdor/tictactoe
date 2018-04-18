@@ -127,8 +127,11 @@ function placement(zone, x, y) {
       (0, _jquery2.default)("#p1").removeClass("display-curPlayer");
       (0, _jquery2.default)("#p2").addClass("display-curPlayer");
       if (GAMEDATA.ai) {
-
-        aiTurn();
+        setTimeout(function () {
+          if (checkBoard()) {
+            aiTurn();
+          }
+        }, 3000);
       }
     } else if (!GAMEDATA.ai) {
       zone.text("O");
@@ -140,15 +143,23 @@ function placement(zone, x, y) {
   }
 }
 
+function checkBoard() {
+  var arr = GAMEDATA.gameBoard.reduce(function (acc, curVal) {
+    return acc.concat(curVal);
+  }, []);
+  return arr.some(function (elm) {
+    return elm === "";
+  });
+}
+
 function aiTurn() {
   var zoneFound = false;
 
   while (!zoneFound) {
     var posX = Math.floor(Math.random() * Math.floor(3));
     var posY = Math.floor(Math.random() * Math.floor(3));
-
     var zone = GAMEDATA.gameBoard[posX][posY];
-    console.log(zone);
+
     var cord = "#" + posX + posY;
     if (zone === "") {
       GAMEDATA.gameBoard[posX][posY] = "O";
@@ -224,6 +235,9 @@ function endGame() {
     GAMEDATA.gameOver = false;
     GAMEDATA.winner = "";
     GAMEDATA.loser = "";
+    if (GAMEDATA.currentPlayer === 2 && GAMEDATA.ai) {
+      aiTurn();
+    }
   }, 3000);
 }
 
