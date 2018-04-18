@@ -77,10 +77,13 @@ var _jquery2 = _interopRequireDefault(_jquery);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var GAMEDATA = {
+  ai: false,
   currentPlayer: 1,
   gameBoard: [["", "", ""], ["", "", ""], ["", "", ""]],
+  score: [0, 0],
   gameOver: false,
-  gameWinner: ""
+  winner: "",
+  loser: ""
 };
 
 (0, _jquery2.default)(document).ready(function () {
@@ -90,7 +93,7 @@ var GAMEDATA = {
 function boardClicked() {
   var posClicked = (0, _jquery2.default)(this).attr("id");
   var posX = posClicked.slice(0, 1);
-  var posY = posClicked.slice(2, 3);
+  var posY = posClicked.slice(1, 2);
 
   if (!GAMEDATA.gameOver) {
     if (GAMEDATA.gameBoard[posX][posY] === "") {
@@ -98,22 +101,32 @@ function boardClicked() {
         (0, _jquery2.default)(this).text("X");
         GAMEDATA.gameBoard[posX][posY] = "X";
         GAMEDATA.currentPlayer = 2;
+        (0, _jquery2.default)("#p1").removeClass("display-curPlayer");
+        (0, _jquery2.default)("#p2").addClass("display-curPlayer");
       } else {
         (0, _jquery2.default)(this).text("O");
         GAMEDATA.gameBoard[posX][posY] = "O";
         GAMEDATA.currentPlayer = 1;
+        (0, _jquery2.default)("#p1").addClass("display-curPlayer");
+        (0, _jquery2.default)("#p2").removeClass("display-curPlayer");
       }
     }
 
     if (checkWinCondition("X")) {
       GAMEDATA.gameOver = true;
-      GAMEDATA.gameWinner = "Player One";
+      GAMEDATA.winner = "#p1";
+      GAMEDATA.loser = "#p2";
+      GAMEDATA.score[0]++;
     } else if (checkWinCondition("O")) {
       GAMEDATA.gameOver = true;
-      GAMEDATA.gameWinner = "Player Two";
+      GAMEDATA.winner = "#p2";
+      GAMEDATA.loser = "#p1";
+      GAMEDATA.score[1]++;
     }
-    console.log(GAMEDATA.gameOver);
-    console.log(GAMEDATA.gameWinner);
+
+    if (GAMEDATA.gameOver) {
+      endGame();
+    }
   }
 }
 
@@ -151,6 +164,28 @@ function checkWinCondition(val) {
     }
   }
   return gameOver;
+}
+
+function endGame() {
+  (0, _jquery2.default)(GAMEDATA.winner).addClass("display-winner");
+  (0, _jquery2.default)(GAMEDATA.loser).addClass("display-loser");
+  (0, _jquery2.default)("#p1Score").text(GAMEDATA.score[0]);
+  (0, _jquery2.default)("#p2Score").text(GAMEDATA.score[1]);
+
+  setTimeout(function () {
+    for (var i = 0; i < 3; i++) {
+      for (var j = 0; j < 3; j++) {
+        GAMEDATA.gameBoard[i][j] = "";
+        var cord = "#" + i + j;
+        (0, _jquery2.default)(cord).text(GAMEDATA.gameBoard[i][j]);
+      }
+    }
+    (0, _jquery2.default)(GAMEDATA.winner).removeClass("display-winner");
+    (0, _jquery2.default)(GAMEDATA.loser).removeClass("display-loser");
+    GAMEDATA.gameOver = false;
+    GAMEDATA.winner = "";
+    GAMEDATA.loser = "";
+  }, 3000);
 }
 
 /***/ }),

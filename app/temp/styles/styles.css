@@ -394,3 +394,25 @@ a {
   grid-template-columns: 1fr 1fr;
   text-align           : center;
 }
+
+.display-winner {
+    color     : lime;
+    -webkit-transform : scale(1.2);
+            transform : scale(1.2);
+    transition: all 0.3s ease-out;
+  }
+
+.display-loser {
+    color     : red;
+    -webkit-transform : scale(.8);
+            transform : scale(.8);
+    transition: all 0.3s ease-out;
+  }
+
+.display-curPlayer {
+    text-decoration: underline;
+  }
+
+.score {
+  font-size: 2rem;
+}
