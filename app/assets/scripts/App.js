@@ -1,6 +1,6 @@
 import $ from "jquery";
 const GAMEDATA = {
-  ai: false,
+  ai: true,
   currentPlayer: 1,
   gameBoard: [
     ["", "", ""],
@@ -23,21 +23,7 @@ function boardClicked() {
   const posY = posClicked.slice(1, 2);
 
   if (!(GAMEDATA.gameOver)) {
-    if (GAMEDATA.gameBoard[posX][posY] === "") {
-      if (GAMEDATA.currentPlayer === 1) {
-        $(this).text("X");
-        GAMEDATA.gameBoard[posX][posY] = "X";
-        GAMEDATA.currentPlayer = 2;
-        $("#p1").removeClass("display-curPlayer");
-        $("#p2").addClass("display-curPlayer");
-      } else {
-        $(this).text("O");
-        GAMEDATA.gameBoard[posX][posY] = "O";
-        GAMEDATA.currentPlayer = 1;
-        $("#p1").addClass("display-curPlayer");
-        $("#p2").removeClass("display-curPlayer");
-      }
-    }
+    placement($(this), posX, posY);
 
     if (checkWinCondition("X")) {
       GAMEDATA.gameOver = true;
@@ -49,6 +35,8 @@ function boardClicked() {
       GAMEDATA.winner = "#p2";
       GAMEDATA.loser = "#p1";
       GAMEDATA.score[1]++;
+    } else if (checkWinCondition("tie")) {
+      GAMEDATA.gameOver = true;
     }
 
     if (GAMEDATA.gameOver) {
@@ -57,6 +45,48 @@ function boardClicked() {
   }
 }
 
+function placement(zone, x, y) {
+  if (GAMEDATA.gameBoard[x][y] === "") {
+    if (GAMEDATA.currentPlayer === 1) {
+      zone.text("X");
+      GAMEDATA.gameBoard[x][y] = "X";
+      GAMEDATA.currentPlayer = 2;
+      $("#p1").removeClass("display-curPlayer");
+      $("#p2").addClass("display-curPlayer");
+      if (GAMEDATA.ai) {
+
+        aiTurn();
+      }
+    } else if (!(GAMEDATA.ai)) {
+      zone.text("O");
+      GAMEDATA.gameBoard[x][y] = "O";
+      GAMEDATA.currentPlayer = 1;
+      $("#p1").addClass("display-curPlayer");
+      $("#p2").removeClass("display-curPlayer");
+    }
+  }
+}
+
+function aiTurn() {
+  let zoneFound = false;
+
+  while (!(zoneFound)) {
+    let posX = Math.floor(Math.random() * Math.floor(3));
+    let posY = Math.floor(Math.random() * Math.floor(3));
+
+    let zone = GAMEDATA.gameBoard[posX][posY];
+    console.log(zone);
+    let cord = "#" + posX + posY;
+    if (zone === "") {
+      GAMEDATA.gameBoard[posX][posY] = "O";
+      $(cord).text("O");
+      GAMEDATA.currentPlayer = 1;
+      $("#p1").addClass("display-curPlayer");
+      $("#p2").removeClass("display-curPlayer");
+      zoneFound = true;
+    }
+  }
+}
 
 function checkWinCondition(val) {
   let gameOver = false;
@@ -90,6 +120,14 @@ function checkWinCondition(val) {
         gameOver = true;
       }
     }
+  }
+  if (!(gameOver) && val === "tie") {
+    const arr = GAMEDATA.gameBoard.reduce(function(acc, curVal) {
+      return acc.concat(curVal);
+    }, []);
+    gameOver = arr.every((curVal) => {
+      return curVal !== "";
+    });
   }
   return gameOver;
 }

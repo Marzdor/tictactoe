@@ -77,7 +77,7 @@ var _jquery2 = _interopRequireDefault(_jquery);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var GAMEDATA = {
-  ai: false,
+  ai: true,
   currentPlayer: 1,
   gameBoard: [["", "", ""], ["", "", ""], ["", "", ""]],
   score: [0, 0],
@@ -96,21 +96,7 @@ function boardClicked() {
   var posY = posClicked.slice(1, 2);
 
   if (!GAMEDATA.gameOver) {
-    if (GAMEDATA.gameBoard[posX][posY] === "") {
-      if (GAMEDATA.currentPlayer === 1) {
-        (0, _jquery2.default)(this).text("X");
-        GAMEDATA.gameBoard[posX][posY] = "X";
-        GAMEDATA.currentPlayer = 2;
-        (0, _jquery2.default)("#p1").removeClass("display-curPlayer");
-        (0, _jquery2.default)("#p2").addClass("display-curPlayer");
-      } else {
-        (0, _jquery2.default)(this).text("O");
-        GAMEDATA.gameBoard[posX][posY] = "O";
-        GAMEDATA.currentPlayer = 1;
-        (0, _jquery2.default)("#p1").addClass("display-curPlayer");
-        (0, _jquery2.default)("#p2").removeClass("display-curPlayer");
-      }
-    }
+    placement((0, _jquery2.default)(this), posX, posY);
 
     if (checkWinCondition("X")) {
       GAMEDATA.gameOver = true;
@@ -122,10 +108,55 @@ function boardClicked() {
       GAMEDATA.winner = "#p2";
       GAMEDATA.loser = "#p1";
       GAMEDATA.score[1]++;
+    } else if (checkWinCondition("tie")) {
+      GAMEDATA.gameOver = true;
     }
 
     if (GAMEDATA.gameOver) {
       endGame();
+    }
+  }
+}
+
+function placement(zone, x, y) {
+  if (GAMEDATA.gameBoard[x][y] === "") {
+    if (GAMEDATA.currentPlayer === 1) {
+      zone.text("X");
+      GAMEDATA.gameBoard[x][y] = "X";
+      GAMEDATA.currentPlayer = 2;
+      (0, _jquery2.default)("#p1").removeClass("display-curPlayer");
+      (0, _jquery2.default)("#p2").addClass("display-curPlayer");
+      if (GAMEDATA.ai) {
+
+        aiTurn();
+      }
+    } else if (!GAMEDATA.ai) {
+      zone.text("O");
+      GAMEDATA.gameBoard[x][y] = "O";
+      GAMEDATA.currentPlayer = 1;
+      (0, _jquery2.default)("#p1").addClass("display-curPlayer");
+      (0, _jquery2.default)("#p2").removeClass("display-curPlayer");
+    }
+  }
+}
+
+function aiTurn() {
+  var zoneFound = false;
+
+  while (!zoneFound) {
+    var posX = Math.floor(Math.random() * Math.floor(3));
+    var posY = Math.floor(Math.random() * Math.floor(3));
+
+    var zone = GAMEDATA.gameBoard[posX][posY];
+    console.log(zone);
+    var cord = "#" + posX + posY;
+    if (zone === "") {
+      GAMEDATA.gameBoard[posX][posY] = "O";
+      (0, _jquery2.default)(cord).text("O");
+      GAMEDATA.currentPlayer = 1;
+      (0, _jquery2.default)("#p1").addClass("display-curPlayer");
+      (0, _jquery2.default)("#p2").removeClass("display-curPlayer");
+      zoneFound = true;
     }
   }
 }
@@ -162,6 +193,14 @@ function checkWinCondition(val) {
         gameOver = true;
       }
     }
+  }
+  if (!gameOver && val === "tie") {
+    var arr = GAMEDATA.gameBoard.reduce(function (acc, curVal) {
+      return acc.concat(curVal);
+    }, []);
+    gameOver = arr.every(function (curVal) {
+      return curVal !== "";
+    });
   }
   return gameOver;
 }
