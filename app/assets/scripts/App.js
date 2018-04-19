@@ -30,30 +30,14 @@ function boardClicked() {
 
   if (!(GAMEDATA.gameOver)) {
     placement($(this), posX, posY);
-
-    if (checkWinCondition(GAMEDATA.p1Char)) {
-      GAMEDATA.gameOver = true;
-      GAMEDATA.winner = "#p1";
-      GAMEDATA.loser = "#p2";
-      GAMEDATA.score[0]++;
-    } else if (checkWinCondition(GAMEDATA.p2Char)) {
-      GAMEDATA.gameOver = true;
-      GAMEDATA.winner = "#p2";
-      GAMEDATA.loser = "#p1";
-      GAMEDATA.score[1]++;
-    } else if (checkWinCondition("tie")) {
-      GAMEDATA.gameOver = true;
-    }
-
+    winCheck();
     if (GAMEDATA.currentPlayer === 2 && GAMEDATA.ai && !(GAMEDATA.gameOver)) {
       setTimeout(function() {
         if (checkBoard()) {
           aiTurn();
+          winCheck();
         }
       }, 1000);
-    }
-    if (GAMEDATA.gameOver) {
-      endGame();
     }
   }
   setTimeout(function() {
@@ -109,7 +93,26 @@ function aiTurn() {
   }
 }
 
-function checkWinCondition(val) {
+function winCheck() {
+  if (winLogic(GAMEDATA.p1Char)) {
+    GAMEDATA.gameOver = true;
+    GAMEDATA.winner = "#p1";
+    GAMEDATA.loser = "#p2";
+    GAMEDATA.score[0]++;
+  } else if (winLogic(GAMEDATA.p2Char)) {
+    GAMEDATA.gameOver = true;
+    GAMEDATA.winner = "#p2";
+    GAMEDATA.loser = "#p1";
+    GAMEDATA.score[1]++;
+  } else if (winLogic("tie")) {
+    GAMEDATA.gameOver = true;
+  }
+  if (GAMEDATA.gameOver) {
+    endGame();
+  }
+}
+
+function winLogic(val) {
   let gameOver = false;
   // Horizontal check
   for (var i = 0; i < 3; i++) {

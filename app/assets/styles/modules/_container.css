@@ -7,12 +7,13 @@
   &-table {
     width : 150px;
     height: 150px;
-    margin: 100px auto 0;
+    margin: 50px auto 0;
   }
 
   &-selection {
     margin    : 25px auto 0;
     text-align: center;
     width     : 60%;
+    color     : white;
   }
 }
