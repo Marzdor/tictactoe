@@ -9,4 +9,10 @@
     height: 150px;
     margin: 100px auto 0;
   }
+
+  &-selection {
+    margin    : 25px auto 0;
+    text-align: center;
+    width     : 60%;
+  }
 }

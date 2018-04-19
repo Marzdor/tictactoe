@@ -1,6 +1,8 @@
 import $ from "jquery";
 const GAMEDATA = {
   ai: true,
+  p1Char: "",
+  p2Char: "",
   currentPlayer: 1,
   gameBoard: [
     ["", "", ""],
@@ -14,10 +16,14 @@ const GAMEDATA = {
 }
 
 $(document).ready(() => {
+  $(".game").hide();
+  selectXO();
+  $(".button").on("click", updateSelection);
   $("span").on("click", boardClicked);
 });
 
 function boardClicked() {
+  $("span").unbind("click");
   const posClicked = $(this).attr("id");
   const posX = posClicked.slice(0, 1);
   const posY = posClicked.slice(1, 2);
@@ -25,12 +31,12 @@ function boardClicked() {
   if (!(GAMEDATA.gameOver)) {
     placement($(this), posX, posY);
 
-    if (checkWinCondition("X")) {
+    if (checkWinCondition(GAMEDATA.p1Char)) {
       GAMEDATA.gameOver = true;
       GAMEDATA.winner = "#p1";
       GAMEDATA.loser = "#p2";
       GAMEDATA.score[0]++;
-    } else if (checkWinCondition("O")) {
+    } else if (checkWinCondition(GAMEDATA.p2Char)) {
       GAMEDATA.gameOver = true;
       GAMEDATA.winner = "#p2";
       GAMEDATA.loser = "#p1";
@@ -50,19 +56,22 @@ function boardClicked() {
       endGame();
     }
   }
+  setTimeout(function() {
+    $("span").bind("click", boardClicked);
+  }, 1000);
 }
 
 function placement(zone, x, y) {
   if (GAMEDATA.gameBoard[x][y] === "") {
     if (GAMEDATA.currentPlayer === 1) {
-      zone.text("X");
-      GAMEDATA.gameBoard[x][y] = "X";
+      zone.text(GAMEDATA.p1Char);
+      GAMEDATA.gameBoard[x][y] = GAMEDATA.p1Char;
       GAMEDATA.currentPlayer = 2;
       $("#p1").removeClass("display-curPlayer");
       $("#p2").addClass("display-curPlayer");
     } else if (!(GAMEDATA.ai)) {
-      zone.text("O");
-      GAMEDATA.gameBoard[x][y] = "O";
+      zone.text(GAMEDATA.p2Char);
+      GAMEDATA.gameBoard[x][y] = GAMEDATA.p2Char;
       GAMEDATA.currentPlayer = 1;
       $("#p1").addClass("display-curPlayer");
       $("#p2").removeClass("display-curPlayer");
@@ -89,8 +98,8 @@ function aiTurn() {
 
     let cord = "#" + posX + posY;
     if (zone === "") {
-      GAMEDATA.gameBoard[posX][posY] = "O";
-      $(cord).text("O");
+      GAMEDATA.gameBoard[posX][posY] = GAMEDATA.p2Char;
+      $(cord).text(GAMEDATA.p2Char);
       GAMEDATA.currentPlayer = 1;
       zoneFound = true;
       $(cord).trigger("click");
@@ -167,4 +176,27 @@ function endGame() {
       aiTurn();
     }
   }, 3000);
+}
+
+function selectXO() {
+  let $title = $("<h2>").text("Do you want to play as X or O?");
+  let $x = $("<button>").addClass("button").text("X");
+  let $o = $("<button>").addClass("button").text("O");
+  let $choices = $("<div>").addClass("container-selection");
+  $choices.append($title).append($x).append($o);
+  $("body").append($choices);
+}
+
+function updateSelection() {
+  let choice = $(this).text();
+
+  if (choice === "X") {
+    GAMEDATA.p1Char = "X";
+    GAMEDATA.p2Char = "O";
+  } else {
+    GAMEDATA.p1Char = "O";
+    GAMEDATA.p2Char = "X";
+  }
+  $(".container-selection").hide();
+  $(".game").show();
 }

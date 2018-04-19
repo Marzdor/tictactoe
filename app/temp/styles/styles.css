@@ -344,6 +344,10 @@ template {
 * {
   box-sizing : border-box;
   font-family: 'Roboto Mono', monospace;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
 }
 
 body {
@@ -389,6 +393,12 @@ a {
     margin: 100px auto 0;
   }
 
+.container-selection {
+    margin    : 25px auto 0;
+    text-align: center;
+    width     : 60%;
+  }
+
 .display {
   display              : grid;
   grid-template-columns: 1fr 1fr;
@@ -415,4 +425,15 @@ a {
 
 .score {
   font-size: 2rem;
+}
+
+.button {
+  height          : 50px;
+  width           : 50px;
+  border          : 1px solid black;
+  text-align      : center;
+  padding         : 10px;
+  font-size       : 1.8rem;
+  cursor          : pointer;
+  background-color: white;
 }

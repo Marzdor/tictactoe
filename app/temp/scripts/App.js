@@ -78,6 +78,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var GAMEDATA = {
   ai: true,
+  p1Char: "",
+  p2Char: "",
   currentPlayer: 1,
   gameBoard: [["", "", ""], ["", "", ""], ["", "", ""]],
   score: [0, 0],
@@ -87,10 +89,14 @@ var GAMEDATA = {
 };
 
 (0, _jquery2.default)(document).ready(function () {
+  (0, _jquery2.default)(".game").hide();
+  selectXO();
+  (0, _jquery2.default)(".button").on("click", updateSelection);
   (0, _jquery2.default)("span").on("click", boardClicked);
 });
 
 function boardClicked() {
+  (0, _jquery2.default)("span").unbind("click");
   var posClicked = (0, _jquery2.default)(this).attr("id");
   var posX = posClicked.slice(0, 1);
   var posY = posClicked.slice(1, 2);
@@ -98,12 +104,12 @@ function boardClicked() {
   if (!GAMEDATA.gameOver) {
     placement((0, _jquery2.default)(this), posX, posY);
 
-    if (checkWinCondition("X")) {
+    if (checkWinCondition(GAMEDATA.p1Char)) {
       GAMEDATA.gameOver = true;
       GAMEDATA.winner = "#p1";
       GAMEDATA.loser = "#p2";
       GAMEDATA.score[0]++;
-    } else if (checkWinCondition("O")) {
+    } else if (checkWinCondition(GAMEDATA.p2Char)) {
       GAMEDATA.gameOver = true;
       GAMEDATA.winner = "#p2";
       GAMEDATA.loser = "#p1";
@@ -123,19 +129,22 @@ function boardClicked() {
       endGame();
     }
   }
+  setTimeout(function () {
+    (0, _jquery2.default)("span").bind("click", boardClicked);
+  }, 1000);
 }
 
 function placement(zone, x, y) {
   if (GAMEDATA.gameBoard[x][y] === "") {
     if (GAMEDATA.currentPlayer === 1) {
-      zone.text("X");
-      GAMEDATA.gameBoard[x][y] = "X";
+      zone.text(GAMEDATA.p1Char);
+      GAMEDATA.gameBoard[x][y] = GAMEDATA.p1Char;
       GAMEDATA.currentPlayer = 2;
       (0, _jquery2.default)("#p1").removeClass("display-curPlayer");
       (0, _jquery2.default)("#p2").addClass("display-curPlayer");
     } else if (!GAMEDATA.ai) {
-      zone.text("O");
-      GAMEDATA.gameBoard[x][y] = "O";
+      zone.text(GAMEDATA.p2Char);
+      GAMEDATA.gameBoard[x][y] = GAMEDATA.p2Char;
       GAMEDATA.currentPlayer = 1;
       (0, _jquery2.default)("#p1").addClass("display-curPlayer");
       (0, _jquery2.default)("#p2").removeClass("display-curPlayer");
@@ -162,8 +171,8 @@ function aiTurn() {
 
     var cord = "#" + posX + posY;
     if (zone === "") {
-      GAMEDATA.gameBoard[posX][posY] = "O";
-      (0, _jquery2.default)(cord).text("O");
+      GAMEDATA.gameBoard[posX][posY] = GAMEDATA.p2Char;
+      (0, _jquery2.default)(cord).text(GAMEDATA.p2Char);
       GAMEDATA.currentPlayer = 1;
       zoneFound = true;
       (0, _jquery2.default)(cord).trigger("click");
@@ -240,6 +249,29 @@ function endGame() {
       aiTurn();
     }
   }, 3000);
+}
+
+function selectXO() {
+  var $title = (0, _jquery2.default)("<h2>").text("Do you want to play as X or O?");
+  var $x = (0, _jquery2.default)("<button>").addClass("button").text("X");
+  var $o = (0, _jquery2.default)("<button>").addClass("button").text("O");
+  var $choices = (0, _jquery2.default)("<div>").addClass("container-selection");
+  $choices.append($title).append($x).append($o);
+  (0, _jquery2.default)("body").append($choices);
+}
+
+function updateSelection() {
+  var choice = (0, _jquery2.default)(this).text();
+
+  if (choice === "X") {
+    GAMEDATA.p1Char = "X";
+    GAMEDATA.p2Char = "O";
+  } else {
+    GAMEDATA.p1Char = "O";
+    GAMEDATA.p2Char = "X";
+  }
+  (0, _jquery2.default)(".container-selection").hide();
+  (0, _jquery2.default)(".game").show();
 }
 
 /***/ }),
